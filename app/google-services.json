@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1005353285496",
+    "project_id": "evee-24423",
+    "storage_bucket": "evee-24423.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1005353285496:android:98402b747bdb61d388fa8d",
+        "android_client_info": {
+          "package_name": "com.eventapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1005353285496-i937ngfkuiq46c52vj5lr902f2kcuaeb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLv3t6X4nRwl0hgUHl8g0bFbfFGtSlZ3A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1005353285496-i937ngfkuiq46c52vj5lr902f2kcuaeb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
