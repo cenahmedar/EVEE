@@ -36,6 +36,7 @@ import com.eventapp.R;
 import com.eventapp.dialogs.ListBottomSheetDialogFragment;
 import com.eventapp.firbaseServices.AuthService;
 import com.eventapp.firbaseServices.EventService;
+import com.eventapp.helpers.BundleManager;
 import com.eventapp.models.AddressModel;
 import com.eventapp.models.Event;
 import com.eventapp.pages.LocationPickActivity;
@@ -62,6 +63,7 @@ import static com.eventapp.helpers.mConstants.Types;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.squareup.picasso.Picasso;
 
 @SuppressLint("NonConstantResourceId")
 public class EventCrudFragment extends BaseFragment implements EventService.IEventService {
@@ -127,6 +129,9 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
         eventService = new EventService(this);
         event = new Event();
 
+        key = (String) bundleManager.getSerializable(this, BundleManager.SELECTED_EVENT_KEY);
+        event = (Event) bundleManager.getSerializable(this, BundleManager.SELECTED_EVENT);
+
     }
 
     private void setToolBar() {
@@ -174,6 +179,23 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
             }
         });
 
+        if (key != null)
+            initView();
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initView() {
+        image_1.setVisibility(View.VISIBLE);
+        btnPickImage.setVisibility(View.GONE);
+        Picasso.get().load(event.getImage()).into(image_1);
+        txName.setText(event.getName());
+        tx_type_name.setText(event.getTypeName());
+        tx_date.setText(event.getDate() + " " + event.getTime());
+        tx_phone.setText(event.getPhone());
+        freeSwitch.setChecked(event.isFree());
+        txPrice.setText(event.getPrice() == null ? null : event.getPrice().toString());
+        txDesc.setText(event.getDescription());
+        tx_location.setText(event.getAddress().getAddress());
     }
 
 
@@ -195,8 +217,12 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
             case R.id.btnSave:
                 if (pickedImage != null)
                     uploadImage(pickedImage);
-                else
-                    save();
+                else {
+                    if (key == null)
+                        save();
+                    else
+                        update();
+                }
                 break;
 
         }
@@ -266,7 +292,10 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
             imageFolder.getDownloadUrl().addOnSuccessListener(uri -> {
                 progressBarBuilder.hide();
                 event.setImage(uri.toString());
-                save();
+                if (key == null)
+                    save();
+                else
+                    update();
             });
         }).addOnFailureListener(e -> {
             progressBarBuilder.hide();
@@ -296,9 +325,32 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
 
     }
 
+
+    private void update() {
+        event.setName(txName.getText().toString().trim());
+        event.setPhone(tx_phone.getText().toString().trim());
+        event.setFree(freeSwitch.isChecked());
+        if (!freeSwitch.isChecked())
+            event.setPrice(Double.parseDouble(txPrice.getText().toString()));
+        else
+            event.setPrice(null);
+
+        event.setDescription(txDesc.getText().toString());
+
+        if (event.getAddress() == null || isNullOrEmpty(event.getName()) || isNullOrEmpty(event.getTypeName()) || event.getDate() == null || event.getTime() == null ||
+                isNullOrEmpty(event.getPhone()) || (event.getPrice() == null && !event.isFree()) || isNullOrEmpty(event.getDescription()) || event.getImage() == null) {
+            Toast.makeText(activity, "please fill in all fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressBarBuilder.show();
+        eventService.updateEvent(key, event);
+    }
+
+
     @Override
     public void EventResponse(EventService.EventResponse response, boolean success, Event event) {
-        if (response.equals(EventService.EventResponse.InsertEvent)) {
+        if (response.equals(EventService.EventResponse.InsertEvent) || response.equals(EventService.EventResponse.UpdateEvent)) {
             progressBarBuilder.hide();
             if (success)
                 activity.onBackPressed();

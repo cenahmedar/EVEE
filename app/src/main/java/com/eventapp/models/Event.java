@@ -3,6 +3,7 @@ package com.eventapp.models;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Event implements Serializable {
 
@@ -13,15 +14,40 @@ public class Event implements Serializable {
     private String Time;
     private String Phone;
     private boolean IsFree;
-    private Double  Price;
+    private Double Price;
     private String Description;
     private String Image;
     private AddressModel Address;
     private String UserKey;
+    private ArrayList<String> Participants;
+
 
     @Exclude
     private User User;
 
+    public boolean isJoined(String userKey) {
+        return Participants != null && Participants.contains(userKey);
+    }
+
+    public int getUsersCount() {
+        return Participants == null ? 0 : Participants.size();
+    }
+
+    public ArrayList<String> getParticipants() {
+        return Participants;
+    }
+
+    public void setParticipants(ArrayList<String> participants) {
+        Participants = participants;
+    }
+
+    public void addParticipant(String userKey) {
+        Participants.add(userKey);
+    }
+
+    public void removeParticipant(String userKey) {
+        Participants.remove(userKey);
+    }
 
     public String getTime() {
         return Time;

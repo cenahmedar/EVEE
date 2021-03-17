@@ -42,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-@SuppressLint("NonConstantResourceId")
+@SuppressLint({"NonConstantResourceId", "SetTextI18n"})
 public class MyEventsFragment extends BaseFragment {
 
     private View rootView;
@@ -91,24 +91,21 @@ public class MyEventsFragment extends BaseFragment {
     private void LoadList() {
         Query query = eventService.getRef().orderByChild("userKey").equalTo(authService.getMyKey());
         adapter = new FirebaseRecyclerAdapter<Event, EventViewHolder>(Event.class, R.layout.event_item, EventViewHolder.class, query) {
+
             @Override
             protected void populateViewHolder(EventViewHolder viewHolder, Event model, int position) {
                 viewHolder.tx_title.setText(model.getName().trim());
                 viewHolder.tx_location.setText(model.getAddress().getAddress());
                 viewHolder.tx_day.setText(Functions.getDay(model.getDate()));
                 viewHolder.tx_month.setText(Functions.getMonthName(model.getDate()));
-
+                viewHolder.tx_count.setText(model.getUsersCount() + "");
                 Picasso.get().load(model.getImage()).into(viewHolder.card_image);
 
-                viewHolder.setItemClickListner(new EventViewHolder.IEventViewHolderListener() {
-                    @Override
-                    public void onEventClick(View view, int position) {
+                viewHolder.setItemClickListner((view, position1) -> {
 
-                        bundleManager = new BundleManager();
-                       // bundleManager.addSerializable(BundleManager.SELECTED_EVENT, model);
-                        bundleManager.addSerializable(BundleManager.SELECTED_EVENT_KEY, adapter.getRef(position).getKey());
-                        activity.runOnUiThread(() -> ((HomePageActivity) activity).loadFragment(new EventDetailFragment(), true, false, bundleManager.getBundle()));
-                    }
+                    bundleManager = new BundleManager();
+                    bundleManager.addSerializable(BundleManager.SELECTED_EVENT_KEY, adapter.getRef(position1).getKey());
+                    activity.runOnUiThread(() -> ((HomePageActivity) activity).loadFragment(new EventDetailFragment(), true, false, bundleManager.getBundle()));
                 });
 
 /*
@@ -153,8 +150,6 @@ public class MyEventsFragment extends BaseFragment {
 
         }
     }
-
-
 
 
 }

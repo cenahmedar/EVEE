@@ -9,6 +9,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,11 @@ public class EventService {
         iEventService.EventResponse(EventResponse.InsertEvent, true, null);
     }
 
+    public void UpdateEvent(Event event, String key) {
+        databaseReference.child(key).setValue(event);
+        iEventService.EventResponse(EventResponse.UpdateEvent, true, null);
+    }
+
     public void updateEvent(String key, Event event) {
         databaseReference.child(key).setValue(event);
         iEventService.EventResponse(EventResponse.InsertEvent, true, null);
@@ -62,11 +69,26 @@ public class EventService {
         });
     }
 
+    public void joinUnJoinEvent(String key, Event model) {
+        if (model.getParticipants() == null || model.getParticipants().size() == 0) {
+            model.setParticipants(new ArrayList<>());
+            model.addParticipant(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+        } else if (model.getParticipants().contains(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid())) {
+            model.removeParticipant(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+        } else {
+            model.addParticipant(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+        }
+        databaseReference.child(key).setValue(model);
+        iEventService.EventResponse(EventResponse.JoinUnJoinEvent, true, null);
+
+    }
+
 
     public enum EventResponse {
         InsertEvent,
         UpdateEvent,
-        GetEvent
+        GetEvent,
+        JoinUnJoinEvent
     }
 
     public interface IEventService {

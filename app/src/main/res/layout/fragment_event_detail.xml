@@ -28,12 +28,27 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/dj_image" />
+                    android:layout_height="200dp">
+
+                    <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:scaleType="centerCrop" />
+
+                    <ImageView
+                        android:id="@+id/btn_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_margin="10dp"
+                        android:src="@drawable/ic_my_edit"
+                        android:foregroundTint="@color/black"
+                        android:visibility="gone" />
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -184,6 +199,46 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
+                                android:text="Type"
+                                android:textColor="@android:color/black"
+                                android:textSize="15sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tx_type"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Jhon Wick"
+                                    android:textColor="@android:color/darker_gray" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
                                 android:text="Creator"
                                 android:textColor="@android:color/black"
                                 android:textSize="15sp" />
@@ -210,7 +265,48 @@
 
                             </LinearLayout>
                         </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="2"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:text="Price"
+                                android:textColor="@android:color/black"
+                                android:textSize="15sp" />
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="TL"
+                                    android:textColor="@android:color/darker_gray"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tx_price"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:text="Jhon Wick"
+                                    android:textColor="@color/textHeading" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
                     </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -270,6 +366,7 @@
         app:layout_constraintWidth_percent=".9">
 
         <ImageView
+            android:id="@+id/btn_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="30dp"
@@ -281,6 +378,7 @@
             android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_join"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
@@ -289,7 +387,7 @@
             android:elevation="10dp"
             android:text="JOIN"
             android:textColor="@android:color/white"
-            app:cornerRadius="20dp"/>
+            app:cornerRadius="20dp" />
     </LinearLayout>
 
 
