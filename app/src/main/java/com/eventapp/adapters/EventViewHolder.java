@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.view.ContextMenu;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eventapp.R;
@@ -34,6 +35,9 @@ public class EventViewHolder extends RecyclerView.ViewHolder implements View.OnC
 
     @BindView(R.id.card_image)
     public ImageView card_image;
+
+    @BindView(R.id.ln_main)
+    public LinearLayout ln_main;
 
 
     private IEventViewHolderListener eventViewHolderListener;

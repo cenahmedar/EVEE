@@ -130,8 +130,9 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
         event = new Event();
 
         key = (String) bundleManager.getSerializable(this, BundleManager.SELECTED_EVENT_KEY);
-        event = (Event) bundleManager.getSerializable(this, BundleManager.SELECTED_EVENT);
-
+        Event event = (Event) bundleManager.getSerializable(this, BundleManager.SELECTED_EVENT);
+        if (event != null)
+            this.event = event;
     }
 
     private void setToolBar() {
@@ -199,7 +200,7 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
     }
 
 
-    @OnClick({R.id.sp_type, R.id.btn_date, R.id.btnPickImage, R.id.btn_location, R.id.btnSave})
+    @OnClick({R.id.sp_type, R.id.btn_date, R.id.btnPickImage, R.id.btn_location, R.id.btnSave, R.id.btnDelete})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.sp_type:
@@ -223,6 +224,10 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
                     else
                         update();
                 }
+                break;
+
+            case R.id.btnDelete:
+                eventService.Delete(key);
                 break;
 
         }
@@ -251,6 +256,7 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
 
                 event.setDate(date);
                 event.setTime(time);
+                event.setDateTime(year + String.format("%02d", month + 1) + String.format("%02d", dayOfMonth) + String.format("%02d", hourOfDay) + String.format("%02d", minute));
 
             }, calendar.get(Calendar.HOUR), calendar.get(Calendar.MINUTE), DateFormat.is24HourFormat(activity));
             timePickerDialog.show();
@@ -350,7 +356,7 @@ public class EventCrudFragment extends BaseFragment implements EventService.IEve
 
     @Override
     public void EventResponse(EventService.EventResponse response, boolean success, Event event) {
-        if (response.equals(EventService.EventResponse.InsertEvent) || response.equals(EventService.EventResponse.UpdateEvent)) {
+        if (response.equals(EventService.EventResponse.InsertEvent) || response.equals(EventService.EventResponse.UpdateEvent) || response.equals(EventService.EventResponse.DeleteEvent)) {
             progressBarBuilder.hide();
             if (success)
                 activity.onBackPressed();

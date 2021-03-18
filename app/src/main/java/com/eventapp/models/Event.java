@@ -3,6 +3,7 @@ package com.eventapp.models;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Event implements Serializable {
@@ -12,6 +13,7 @@ public class Event implements Serializable {
     private String TypeName;
     private String Date;
     private String Time;
+    private String DateTime;
     private String Phone;
     private boolean IsFree;
     private Double Price;
@@ -154,5 +156,13 @@ public class Event implements Serializable {
 
     public void setUser(com.eventapp.models.User user) {
         User = user;
+    }
+
+    public String getDateTime() {
+        return DateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        DateTime = dateTime;
     }
 }

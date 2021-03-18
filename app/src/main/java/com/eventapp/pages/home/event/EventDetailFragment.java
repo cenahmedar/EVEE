@@ -111,10 +111,10 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
         tx_user_name.setText(event.getUser().getName().toUpperCase() + " " + event.getUser().getSurName().toUpperCase());
         Picasso.get().load(event.getImage()).into(imageView);
 
-        if(event.isJoined(authService.getMyKey())){
+        if (event.isJoined(authService.getMyKey())) {
             btn_join.setBackgroundColor(activity.getResources().getColor(R.color.pink));
             btn_join.setText("LEAVE");
-        }else{
+        } else {
             btn_join.setBackgroundColor(activity.getResources().getColor(R.color.greenJoinBtnColor));
             btn_join.setText("JOIN");
         }
@@ -124,9 +124,13 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
     public void AuthResponse(AuthService.AuthResponse response, boolean success, User user) {
         if (response.equals(AuthService.AuthResponse.GetUser) && success) {
             progressBarBuilder.hide();
-            authService.getUser(event.getUserKey());
-            event.setUser(user);
-            setEvent();
+            if (event == null) {
+                activity.onBackPressed();
+            } else{
+                authService.getUser(event.getUserKey());
+                event.setUser(user);
+                setEvent();
+            }
         }
     }
 
@@ -135,7 +139,10 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
         if (response.equals(EventService.EventResponse.GetEvent) && success) {
             progressBarBuilder.hide();
             this.event = event;
-            authService.getUser(event.getUserKey());
+            if (event == null) {
+                activity.onBackPressed();
+            } else
+                authService.getUser(event.getUserKey());
 
         } else if (response.equals(EventService.EventResponse.JoinUnJoinEvent)) {
             eventService.getEvent(key);
@@ -151,7 +158,7 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
                 break;
 
             case R.id.btn_join:
-                joinEvent();
+                eventService.joinUnJoinEvent(key, event);
                 break;
 
 
@@ -163,10 +170,6 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
                 break;
 
         }
-    }
-
-    private void joinEvent() {
-        eventService.joinUnJoinEvent(key, event);
     }
 
 }

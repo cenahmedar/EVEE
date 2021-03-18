@@ -5,6 +5,7 @@ import android.text.format.DateFormat;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 @SuppressLint("SimpleDateFormat")
@@ -35,5 +36,9 @@ public class Functions {
         }
 
         return null;
+    }
+
+    public static String dateTimeToInt(Date date) {
+        return new SimpleDateFormat("yyyyMMddHHmm").format(date).toUpperCase();
     }
 }

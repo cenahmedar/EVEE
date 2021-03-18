@@ -44,11 +44,6 @@ public class EventService {
         iEventService.EventResponse(EventResponse.InsertEvent, true, null);
     }
 
-    public void UpdateEvent(Event event, String key) {
-        databaseReference.child(key).setValue(event);
-        iEventService.EventResponse(EventResponse.UpdateEvent, true, null);
-    }
-
     public void updateEvent(String key, Event event) {
         databaseReference.child(key).setValue(event);
         iEventService.EventResponse(EventResponse.InsertEvent, true, null);
@@ -83,12 +78,18 @@ public class EventService {
 
     }
 
+    public void Delete(String key) {
+        databaseReference.child(key).removeValue();
+        iEventService.EventResponse(EventResponse.DeleteEvent, true, null);
+    }
+
 
     public enum EventResponse {
         InsertEvent,
         UpdateEvent,
         GetEvent,
-        JoinUnJoinEvent
+        JoinUnJoinEvent,
+        DeleteEvent
     }
 
     public interface IEventService {
