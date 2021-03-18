@@ -70,7 +70,7 @@ public class EventListFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_map:
-
+                activity.runOnUiThread(() -> ((HomePageActivity) activity).loadFragment(new EventMapFragment(), true, false, bundleManager.getBundle()));
                 break;
 
             case R.id.action_filter:
