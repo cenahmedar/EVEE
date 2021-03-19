@@ -129,7 +129,7 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
             if (event == null) {
                 activity.onBackPressed();
             } else {
-                authService.getUser(event.getUserKey());
+               // authService.getUser(event.getUserKey());
                 event.setUser(user);
                 setEvent();
             }
