@@ -126,11 +126,17 @@ public class AuthService {
         });
     }
 
+    public void updateUser(String key, User user) {
+        databaseReference.child(key).setValue(user);
+        authService.AuthResponse(AuthResponse.UpdateUser, false,null);
+    }
+
 
     public enum AuthResponse {
         Register,
         Login,
-        GetUser
+        GetUser,
+        UpdateUser
     }
 
     public interface IAuthService {

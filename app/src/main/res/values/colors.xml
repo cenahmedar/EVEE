@@ -38,5 +38,6 @@
     <color name="new_grey">#D2D2D2</color>
     <color name="colorBlueGray">#7f8fa6</color>
     <color name="background_holo_light_sec">#757575</color>
+    <color name="colorCharcoalGray">#353b48</color>
 
 </resources>

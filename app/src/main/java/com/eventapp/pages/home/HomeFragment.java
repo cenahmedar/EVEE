@@ -88,7 +88,7 @@ public class HomeFragment extends BaseFragment {
                 break;
 
             case R.id.action_my_list:
-                activity.runOnUiThread(() -> ((HomePageActivity) activity).loadFragment(new MyEventsFragment(), true, false, bundleManager.getBundle()));
+                ((HomePageActivity) activity).loadFragment(new MyEventsFragment(), true, false, bundleManager.getBundle());
                 break;
         }
         return super.onOptionsItemSelected(item);

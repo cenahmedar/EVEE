@@ -7,6 +7,7 @@ public class User implements Serializable {
     private String surName;
     private String email;
     private String password;
+    private String image;
 
 
     public User() {
@@ -49,5 +50,13 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

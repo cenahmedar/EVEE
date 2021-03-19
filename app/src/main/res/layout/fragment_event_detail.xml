@@ -28,26 +28,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <androidx.coordinatorlayout.widget.CoordinatorLayout
+
+                <ImageView
+                    android:id="@+id/imageView"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp">
-
-                    <ImageView
-                        android:id="@+id/imageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:scaleType="centerCrop" />
-
-                    <ImageView
-                        android:id="@+id/btn_edit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:layout_margin="10dp"
-                        android:src="@drawable/ic_my_edit"
-                        android:foregroundTint="@color/black"
-                        android:visibility="gone" />
-                </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop" />
 
 
                 <LinearLayout
@@ -57,6 +43,7 @@
                     android:layout_marginTop="20dp"
                     android:orientation="vertical"
                     android:paddingBottom="20dp">
+
 
                     <TextView
                         android:id="@+id/tx_name"
@@ -164,6 +151,16 @@
 
                         </LinearLayout>
 
+
+                        <ImageView
+                            android:id="@+id/btn_edit"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="bottom|end"
+                            android:layout_marginStart="70dp"
+                            android:foregroundTint="@color/black"
+                            android:src="@drawable/ic_my_edit"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
@@ -319,9 +316,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/count_background"
-                            android:orientation="vertical"
-
-                            >
+                            android:orientation="vertical">
 
                             <TextView
                                 android:id="@+id/tx_count"
@@ -332,7 +327,9 @@
                                 android:textAlignment="center"
                                 android:textColor="@color/textBlue"
                                 android:textSize="15sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"
+                                android:clickable="true"
+                                android:focusable="true" />
                         </LinearLayout>
 
                         <TextView

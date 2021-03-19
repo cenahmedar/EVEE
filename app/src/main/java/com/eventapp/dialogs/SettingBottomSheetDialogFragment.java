@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import com.eventapp.R;
 import com.eventapp.helpers.Apm;
 import com.eventapp.pages.auth.AuthActivity;
+import com.eventapp.pages.home.HomePageActivity;
+import com.eventapp.pages.home.ProfileFragment;
+import com.eventapp.pages.home.event.MyEventsFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -39,6 +42,11 @@ public class SettingBottomSheetDialogFragment extends BottomSheetDialogFragment 
             startActivity(i);
             getActivity().finish();
             FirebaseAuth.getInstance().signOut();
+        });
+
+        root.findViewById(R.id.btn_profile).setOnClickListener(view -> {
+            dismiss();
+            ((HomePageActivity) getActivity()).loadFragment(new ProfileFragment(), true, false,null);
         });
         return root;
     }

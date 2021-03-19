@@ -18,6 +18,8 @@ import android.widget.TextView;
 
 import com.eventapp.BaseFragment;
 import com.eventapp.R;
+import com.eventapp.dialogs.EventSearchDialog;
+import com.eventapp.dialogs.ParticipantsDialog;
 import com.eventapp.firbaseServices.AuthService;
 import com.eventapp.firbaseServices.EventService;
 import com.eventapp.helpers.BundleManager;
@@ -126,7 +128,7 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
             progressBarBuilder.hide();
             if (event == null) {
                 activity.onBackPressed();
-            } else{
+            } else {
                 authService.getUser(event.getUserKey());
                 event.setUser(user);
                 setEvent();
@@ -150,7 +152,7 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
     }
 
 
-    @OnClick({R.id.btn_close, R.id.btn_join, R.id.btn_edit})
+    @OnClick({R.id.btn_close, R.id.btn_join, R.id.btn_edit, R.id.tx_count})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_close:
@@ -166,7 +168,12 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
                 bundleManager = new BundleManager();
                 bundleManager.addSerializable(BundleManager.SELECTED_EVENT, event);
                 bundleManager.addSerializable(BundleManager.SELECTED_EVENT_KEY, key);
-                activity.runOnUiThread(() -> ((HomePageActivity) activity).loadFragment(new EventCrudFragment(), true, false, bundleManager.getBundle()));
+                ((HomePageActivity) activity).loadFragment(new EventCrudFragment(), true, false, bundleManager.getBundle());
+                break;
+
+            case R.id.tx_count:
+                ParticipantsDialog exampleDialog = new ParticipantsDialog(key);
+                exampleDialog.show(getChildFragmentManager(), "ParticipantsDialog");
                 break;
 
         }
