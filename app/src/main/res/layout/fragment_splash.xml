@@ -9,7 +9,6 @@
     android:background="@drawable/main_gradient_vertical">
 
     <ImageView
-        android:layout_marginTop="80dp"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:src="@drawable/logo"
