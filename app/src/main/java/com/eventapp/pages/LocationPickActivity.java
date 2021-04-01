@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eventapp.R;
+import com.eventapp.helpers.CurrentLocation;
 import com.eventapp.models.AddressModel;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,12 +40,12 @@ import java.util.List;
 import java.util.Locale;
 
 @SuppressLint("NonConstantResourceId")
-public class LocationPickActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
+public class LocationPickActivity extends FragmentActivity implements OnMapReadyCallback {//, LocationListener
 
     private GoogleMap mMap;
-    private LocationManager locationManager;
+    //private LocationManager locationManager;
     private Location myLocation;
-
+    private CurrentLocation currentLocation;
 
     @BindView(R.id.txAddress)
     TextView txAddress;
@@ -57,7 +58,10 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_pick);
 
-
+        currentLocation = new CurrentLocation(this, location -> {
+            myLocation = location;
+            goToMyLocation(location.getLatitude(), location.getLongitude());
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -92,7 +96,7 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
 
             getAddress(latLng.latitude, latLng.longitude);
         });
-        getCurrentLocation();
+        currentLocation.getLocation();
     }
 
 /*    @SuppressLint("MissingPermission")
@@ -114,7 +118,7 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
         }
 
     }*/
-
+/*
     @SuppressLint("MissingPermission")
     public void getCurrentLocation() {
         if (isPermissionAccess()) {
@@ -140,7 +144,7 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
                 goToMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
         }
 
-    }
+    }*/
 
     private boolean isPermissionAccess() {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
@@ -223,9 +227,9 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
 
     }
 
-    @Override
+  /*  @Override
     public void onLocationChanged(@NonNull Location location) {
         myLocation = location;
         goToMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
-    }
+    }*/
 }

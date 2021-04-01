@@ -4,10 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -22,13 +20,11 @@ import android.widget.Toast;
 
 import com.eventapp.BaseFragment;
 import com.eventapp.R;
-import com.eventapp.firbaseServices.AuthService;
 import com.eventapp.firbaseServices.EventService;
 import com.eventapp.helpers.BundleManager;
+import com.eventapp.helpers.CurrentLocation;
 import com.eventapp.helpers.Functions;
-import com.eventapp.models.BasicModel;
 import com.eventapp.models.Event;
-import com.eventapp.models.EventFilter;
 import com.eventapp.models.FirebaseModel;
 import com.eventapp.pages.home.HomePageActivity;
 import com.google.android.gms.maps.CameraUpdate;
@@ -37,14 +33,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -52,13 +46,13 @@ import static android.content.Context.LOCATION_SERVICE;
 public class EventMapFragment extends BaseFragment implements EventService.IEventService {
 
     private GoogleMap mMap;
-    private double currentLatitude;
-    private double currentLongitude;
+  /*  private double currentLatitude;
+    private double currentLongitude;*/
 
     private EventService eventService;
     private ArrayList<FirebaseModel<Event>> events;
-
-
+    private CurrentLocation currentLocation;
+    private Location myLocation;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
@@ -74,15 +68,21 @@ public class EventMapFragment extends BaseFragment implements EventService.IEven
 
             }
         });
-        goToMyLocation();
+        currentLocation.getLocation();
+        //goToMyLocation(location.getLatitude(), location.getLongitude());
     };
+
 
     @Override
     public View provideYourFragmentView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event_map, parent, false);
         ButterKnife.bind(this, rootView);
+        currentLocation = new CurrentLocation(activity, location -> {
+            myLocation = location;
+            goToMyLocation(location.getLatitude(), location.getLongitude());
+        });
         setToolbar();
-        getCurrentLocation();
+        //getCurrentLocation();
         eventService = new EventService(this);
         getEvents();
         return rootView;
@@ -126,7 +126,7 @@ public class EventMapFragment extends BaseFragment implements EventService.IEven
         }
     }
 
-    @SuppressLint("MissingPermission")
+/*    @SuppressLint("MissingPermission")
     public void getCurrentLocation() {
         if (isPermisionAccess()) {
             LocationManager locationManager = (LocationManager) activity.getSystemService(LOCATION_SERVICE);
@@ -144,9 +144,9 @@ public class EventMapFragment extends BaseFragment implements EventService.IEven
             }
         }
 
-    }
+    }*/
 
-    private void goToMyLocation() {
+    private void goToMyLocation(double currentLatitude, double currentLongitude) {
         LatLng myLocation = new LatLng(currentLatitude, currentLongitude);
         mMap.addMarker(new MarkerOptions().position(new LatLng(currentLatitude, currentLongitude)).title("Current"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation));
