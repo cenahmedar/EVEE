@@ -1,5 +1,6 @@
 package com.eventapp.pages;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 import butterknife.BindView;
@@ -9,15 +10,17 @@ import butterknife.OnClick;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,18 +34,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.opensooq.supernova.gligar.GligarPicker;
 
 import java.util.List;
 import java.util.Locale;
 
-public class LocationPickActivity extends FragmentActivity implements OnMapReadyCallback {
+@SuppressLint("NonConstantResourceId")
+public class LocationPickActivity extends FragmentActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
     private LocationManager locationManager;
-    private double currentlatitude;
-    private double currentlongitude;
-    private Marker marker;
+    private Location myLocation;
 
 
     @BindView(R.id.txAddress)
@@ -56,7 +57,7 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_pick);
 
-        getCurrentLocation();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -91,13 +92,12 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
 
             getAddress(latLng.latitude, latLng.longitude);
         });
-
-        goToMyLocation();
+        getCurrentLocation();
     }
 
-    @SuppressLint("MissingPermission")
+/*    @SuppressLint("MissingPermission")
     public void getCurrentLocation() {
-        if (isPermisionAccess()) {
+        if (isPermissionAccess()) {
             locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
             if (locationManager != null) {
                 Location gpsLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -113,9 +113,36 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
             }
         }
 
+    }*/
+
+    @SuppressLint("MissingPermission")
+    public void getCurrentLocation() {
+        if (isPermissionAccess()) {
+            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+            myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+
+            if (myLocation == null)
+                myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            if (myLocation == null)
+                myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            if (myLocation == null) { //If you need a real-time position, you should request updates even if the first location is not null
+                //You don't need to use all three of these, check this answer for a complete explanation: https://stackoverflow.com/questions/6775257/android-location-providers-gps-or-network-provider
+
+                locationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, Looper.myLooper());
+                locationManager.requestSingleUpdate(LocationManager.PASSIVE_PROVIDER, this, Looper.myLooper());
+                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, Looper.myLooper()); //This consumes a lot of battery
+
+                //10 * 1000 is the delay (in millis) between two positions update
+                //10F is the minimum distance (in meters) for which you'll have update
+            } else
+                goToMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
+        }
+
     }
 
-    private boolean isPermisionAccess() {
+    private boolean isPermissionAccess() {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
     }
 
@@ -158,7 +185,8 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
                 finish();
                 break;
             case R.id.floatingActionButton:
-                goToMyLocation();
+                if (myLocation != null)
+                    goToMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
                 break;
             case R.id.btnSave:
                 UpdateLocation();
@@ -168,7 +196,7 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
     }
 
 
-    private void goToMyLocation() {
+    private void goToMyLocation(double currentlatitude, double currentlongitude) {
         mMap.clear();
         LatLng myLocation = new LatLng(currentlatitude, currentlongitude);
         mMap.addMarker(new MarkerOptions().position(new LatLng(currentlatitude, currentlongitude)).title("Current"));
@@ -195,4 +223,9 @@ public class LocationPickActivity extends FragmentActivity implements OnMapReady
 
     }
 
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        myLocation = location;
+        goToMyLocation(myLocation.getLatitude(), myLocation.getLongitude());
+    }
 }
