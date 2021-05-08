@@ -71,4 +71,6 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.karumi:dexter:6.2.2'
 
+    implementation 'com.stepstone.apprating:app-rating:2.3.1'
+
 }

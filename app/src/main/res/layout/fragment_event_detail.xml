@@ -65,6 +65,41 @@
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15sp" />
 
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ln_ratingBar"
+                            android:clickable="true"
+                            android:focusable="true">
+
+                            <RatingBar
+                                android:id="@+id/ratingBar"
+                                style="?android:attr/ratingBarStyleIndicator"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:isIndicator="true"
+                                android:max="5"
+                                android:rating="2"
+                                android:theme="@style/RatingBar"/>
+                        </LinearLayout>
+
+
+                        <ImageView
+                            android:id="@+id/btn_rate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="20dp"
+                            android:src="@drawable/ic_action_thumb" />
+                    </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -322,14 +357,14 @@
                                 android:id="@+id/tx_count"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:focusable="true"
                                 android:padding="10dp"
                                 android:text="+135"
                                 android:textAlignment="center"
                                 android:textColor="@color/textBlue"
                                 android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:clickable="true"
-                                android:focusable="true" />
+                                android:textStyle="bold" />
                         </LinearLayout>
 
                         <TextView

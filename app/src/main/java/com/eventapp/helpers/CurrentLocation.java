@@ -119,52 +119,48 @@ public class CurrentLocation {
                     }
                 }).check();
     }
-
+    @SuppressLint("MissingPermission")
     private void checkGbs() {
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
         Task<LocationSettingsResponse> task = LocationServices.getSettingsClient(activity).checkLocationSettings(builder.build());
-        task.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
-            @SuppressLint("MissingPermission")
-            @Override
-            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
-                try {
-                    LocationSettingsResponse response = task.getResult(ApiException.class);
-                    // All location settings are satisfied. The client can initialize location
-                    // requests here.
-                    progressBarBuilder.show();
-                    mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
+        task.addOnCompleteListener(task1 -> {
+            try {
+                LocationSettingsResponse response = task1.getResult(ApiException.class);
+                // All location settings are satisfied. The client can initialize location
+                // requests here.
+                progressBarBuilder.show();
+                mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
-                } catch (ApiException exception) {
-                    String error = exception.getMessage();
-                    switch (exception.getStatusCode()) {
+            } catch (ApiException exception) {
+                String error = exception.getMessage();
+                switch (exception.getStatusCode()) {
 
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
-                                    "location settings ");
-                            // Toast.makeText(context, "Location settings are not satisfied." + "" + error, Toast.LENGTH_LONG).show();
-                            // Toast.makeText(context, "Location settings are not satisfied. Attempting to upgrade location settings ", Toast.LENGTH_SHORT).show();
-                            try {
-                                // Show the dialog by calling startResolutionForResult(), and check the
-                                // result in onActivityResult().
-                                ResolvableApiException rae = (ResolvableApiException) exception;
-                                rae.startResolutionForResult((Activity) activity, REQUEST_CHECK_SETTINGS);
-                            } catch (IntentSender.SendIntentException sie) {
-                                Log.i(TAG, "PendingIntent.");
-                                Toast.makeText(activity, ".", Toast.LENGTH_SHORT).show();
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            String errorMessage = "Location settings are inadequate, and cannot be " +
-                                    "fixed here. Fix in Settings.";
-                            Toast.makeText(activity, "Konum ayarları yetersizdir lütfen ayarlardan düzeltiniz." + "" + error, Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, errorMessage);
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
+                                "location settings ");
+                        // Toast.makeText(context, "Location settings are not satisfied." + "" + error, Toast.LENGTH_LONG).show();
+                        // Toast.makeText(context, "Location settings are not satisfied. Attempting to upgrade location settings ", Toast.LENGTH_SHORT).show();
+                        try {
+                            // Show the dialog by calling startResolutionForResult(), and check the
+                            // result in onActivityResult().
+                            ResolvableApiException rae = (ResolvableApiException) exception;
+                            rae.startResolutionForResult((Activity) activity, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException sie) {
+                            Log.i(TAG, "PendingIntent.");
+                            Toast.makeText(activity, ".", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        String errorMessage = "Location settings are inadequate, and cannot be " +
+                                "fixed here. Fix in Settings.";
+                        Toast.makeText(activity, "Konum ayarları yetersizdir lütfen ayarlardan düzeltiniz." + "" + error, Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, errorMessage);
 
-                            // Toast.makeText((Activity) context, errorMessage, Toast.LENGTH_LONG).show();
-                        default:
-                            Toast.makeText(activity, "unkown error." + "" + error, Toast.LENGTH_LONG).show();
-                            break;
-                    }
+                        // Toast.makeText((Activity) context, errorMessage, Toast.LENGTH_LONG).show();
+                    default:
+                        Toast.makeText(activity, "unkown error." + "" + error, Toast.LENGTH_LONG).show();
+                        break;
                 }
             }
         });

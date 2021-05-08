@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -14,29 +15,46 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.eventapp.BaseFragment;
 import com.eventapp.R;
+import com.eventapp.dialogs.EventRatingDialog;
 import com.eventapp.dialogs.EventSearchDialog;
 import com.eventapp.dialogs.ParticipantsDialog;
 import com.eventapp.firbaseServices.AuthService;
 import com.eventapp.firbaseServices.EventService;
+import com.eventapp.firbaseServices.RatingService;
 import com.eventapp.helpers.BundleManager;
 import com.eventapp.models.Event;
+import com.eventapp.models.Rating;
 import com.eventapp.models.User;
 import com.eventapp.pages.home.HomePageActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.AppRatingDialog;
+import com.stepstone.apprating.listener.RatingDialogListener;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 
 @SuppressLint("NonConstantResourceId")
-public class EventDetailFragment extends BaseFragment implements EventService.IEventService, AuthService.IAuthService {
+public class EventDetailFragment extends BaseFragment implements EventService.IEventService,
+        AuthService.IAuthService, RatingDialogListener, RatingService.IRatingService {
 
 
     private View rootView;
     private String key;
     private EventService eventService;
+    private RatingService ratingService;
     private AuthService authService;
     private Event event;
+    private FirebaseAuth firebaseAuth;
 
     @BindView(R.id.imageView)
     ImageView imageView;
@@ -74,13 +92,18 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
     @BindView(R.id.btn_join)
     Button btn_join;
 
+    @BindView(R.id.ratingBar)
+    RatingBar ratingBar;
+
     @Override
     public View provideYourFragmentView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_event_detail, parent, false);
         ButterKnife.bind(this, rootView);
 
         eventService = new EventService(this);
+        ratingService = new RatingService(this);
         authService = new AuthService(activity, apm, this);
+        firebaseAuth = FirebaseAuth.getInstance();
         key = (String) bundleManager.getSerializable(this, BundleManager.SELECTED_EVENT_KEY);
 
         init();
@@ -90,8 +113,8 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
     private void init() {
         progressBarBuilder.show();
         eventService.getEvent(key);
+        ratingService.getEventRate(key);
     }
-
 
     @SuppressLint("SetTextI18n")
     private void setEvent() {
@@ -129,7 +152,7 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
             if (event == null) {
                 activity.onBackPressed();
             } else {
-               // authService.getUser(event.getUserKey());
+                // authService.getUser(event.getUserKey());
                 event.setUser(user);
                 setEvent();
             }
@@ -152,7 +175,7 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
     }
 
 
-    @OnClick({R.id.btn_close, R.id.btn_join, R.id.btn_edit, R.id.tx_count})
+    @OnClick({R.id.btn_close, R.id.btn_join, R.id.btn_edit, R.id.tx_count, R.id.btn_rate, R.id.ln_ratingBar})
     public void OnClick(View view) {
         switch (view.getId()) {
             case R.id.btn_close:
@@ -176,7 +199,68 @@ public class EventDetailFragment extends BaseFragment implements EventService.IE
                 exampleDialog.show(getChildFragmentManager(), "ParticipantsDialog");
                 break;
 
+            case R.id.btn_rate:
+                showRatingDialog();
+                break;
+
+            case R.id.ln_ratingBar:
+                EventRatingDialog eventRatingDialog = new EventRatingDialog(key);
+                eventRatingDialog.show(getChildFragmentManager(), "EventRatingDialog");
+                break;
+
         }
     }
 
+    private void showRatingDialog() {
+        new AppRatingDialog.Builder()
+                .setPositiveButtonText("SAVE")
+                .setNegativeButtonText("CANCEL")
+                .setNoteDescriptions(Arrays.asList("very bad", "bad", "not bad", "good", "very good"))
+                .setDefaultRating(1)
+                .setTitle("Stars")
+                .setDescription("Please share your thoughts")
+                .setTitleTextColor(R.color.colorPrimary)
+                .setDescriptionTextColor(R.color.colorPrimary)
+                .setHint("Comment..")
+                .setHintTextColor(R.color.whitecustom)
+                .setCommentTextColor(android.R.color.white)
+                .setCommentBackgroundColor(R.color.colorPrimaryDark)
+                .setWindowAnimation(R.style.MyDialogFadeAnimation)
+                .create(getActivity()).setTargetFragment(this, 0)
+                .show();
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+
+    }
+
+    @Override
+    public void onNeutralButtonClicked() {
+
+    }
+
+    @Override
+    public void onPositiveButtonClicked(int value, @NotNull String comment) {
+        final Rating rating = new Rating(Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid(),
+                key,
+                String.valueOf(value),
+                comment);
+
+        ratingService.insertRate(rating);
+    }
+
+    @Override
+    public void RatingResponse(RatingService.RatingResponse response, boolean success, float rate) {
+        if (response.equals(RatingService.RatingResponse.InsertRate)) {
+            ratingService.getEventRate(key);
+        } else if (response.equals(RatingService.RatingResponse.EventRate)) {
+            ratingBar.setRating(rate);
+        }
+    }
+
+    @Override
+    public void ListResponse(ArrayList<Rating> ratings) {
+
+    }
 }
